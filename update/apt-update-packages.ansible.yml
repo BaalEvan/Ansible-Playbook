@@ -1,0 +1,9 @@
+---
+- name: apt Update Playbook
+- hosts: all
+  become: true
+- tasks:
+    - name: apt update packages
+      apt:
+      upgrade: true
+      update_cache: true
