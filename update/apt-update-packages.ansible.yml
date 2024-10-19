@@ -6,6 +6,13 @@
     - name: Update Packages via apt
       ansible.builtin.apt:
         update_cache: true
-    - name: Upgrade Packages via apt
-      ansible.builtin.apt:
-        upgrade: "yes"
+        upgrade: dist
+      register: result
+    - name: Display status
+      ansible.builtin.debug:
+        msg: "{{ result.stdout_lines }}"
+    - name: Check if a reboot is needed for Debian and Ubuntu boxes
+      ansible.builtin.stat:
+        path: /var/run/reboot-require
+        get_checksum: false
+      register: reboot_required_file
