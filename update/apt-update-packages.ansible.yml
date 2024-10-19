@@ -1,10 +1,13 @@
 ---
-- name: apt Update Playbook
-
-- hosts: all
+- name: Update and upgrade apt packages
+  hosts: all
   become: true
-- tasks:
-    - name: apt update packages
-      apt:
-        upgrade: "yes"
+
+  tasks:
+    - name: Update Packages via apt
+      ansible.builtin.apt:
         update_cache: true
+
+    - name: Upgrade Packages via apt
+      ansible.builtin.apt:
+        upgrade: "yes"
