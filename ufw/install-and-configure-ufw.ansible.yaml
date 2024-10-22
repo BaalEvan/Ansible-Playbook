@@ -1,0 +1,70 @@
+---
+- name: Install and configure UFW on Debian
+  hosts: all
+  become: true
+  vars:
+    # allowed_ssh_ports:
+    #   - 22
+    # allowed_http_ports:
+    #   - 80
+    #   - 443
+
+  tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Install UFW
+      ansible.builtin.apt:
+        name: ufw
+        state: present
+
+    - name: Enable UFW
+      community.general.ufw:
+        state: enabled
+        policy: deny
+
+    # - name: Allow SSH connections
+    #   ufw:
+    #     rule: allow
+    #     port: "{{ item }}"
+    #   loop: "{{ allowed_ssh_ports }}"
+
+    - name: Deny all incoming
+      community.general.ufw:
+        default: deny
+        direction: incoming
+
+    - name: Allow all incoming
+      community.general.ufw:
+        default: allow
+        direction: outgoing
+
+    # - name: Allow HTTP/HTTPS connections
+    #   community.general.ufw:
+    #     rule: allow
+    #     port: "{{ item }}"
+    #   loop: "{{ allowed_http_ports }}"
+
+    # - name: Limit SSH connections
+    #   ufw:
+    #     rule: limit
+    #     port: 22
+
+    # - name: Disable IPv6 in UFW
+    #   community.general.ufw:
+    #     ipv6: false
+
+    - name: Reload UFW
+      community.general.ufw:
+        state: reloaded
+
+    - name: Check UFW status
+      ansible.builtin.command: ufw status verbose
+      register: ufw_status
+      changed_when: false
+
+    - name: Display UFW status
+      ansible.builtin.debug:
+        var: ufw_status
